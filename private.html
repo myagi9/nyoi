@@ -1,12 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン後ページ</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Private Page</title>
 </head>
 <body>
-  <h1>ログイン後ページ</h1>
-  <p>ここはログインしないと見れません</p>
+  <h1>認証されたページ</h1>
+
+  <p id="message">ユーザー情報を読み込み中...</p>
+
+  <p><a href="/.auth/logout">ログアウト</a></p>
+
+  <script>
+    async function loadUser() {
+      const message = document.getElementById('message');
+
+      try {
+        const response = await fetch('/.auth/me');
+        const data = await response.json();
+
+        const user = data.clientPrincipal;
+
+        if (!user) {
+          message.textContent = 'ログイン情報が取得できませんでした。';
+          return;
+        }
+
+        message.textContent = `こんにちは、${user.userDetails} さん`;
+        console.log('user info:', user);
+      } catch (error) {
+        console.error(error);
+        message.textContent = 'ユーザー情報の取得に失敗しました。';
+      }
+    }
+
+    loadUser();
+  </script>
 </body>
 </html>
